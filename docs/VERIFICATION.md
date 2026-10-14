@@ -147,5 +147,31 @@ runtime wheel; it is included only in the source archive to reproduce its tests.
 Independent harness review identified an unverified registry-ACL restoration
 claim; restoration now requires descriptor readback equality. Its regression
 test failed before the helper was added and passed after correction. These local
-checks do not yet establish the controlled A/B/C/D2 results; those require the
-actual separate disposable-runner experiment.
+checks did not by themselves establish the controlled A/B/C/D2 results; the
+subsequent actual disposable-runner experiment below supplies that evidence.
+
+### Hosted results
+
+[Controlled Windows validation run 38596950991](https://github.com/GAWI01/sigdoctor/actions/runs/38596950991)
+passed on product/test commit `432aeba43de12a570ea836479fa1171a85602429`.
+Windows Server 2025 Datacenter x64 build 26100.33438, Windows PowerShell
+5.1.26100.33438. All five real CLI cases matched: A READY, B BLIND, C PARTIAL,
+D1/D2 UNKNOWN. Independent state evidence and verified rollback are recorded in
+WINDOWS_VALIDATION.md and validation/windows_hosted_2026-10-14.json.
+
+Hosted commands: `python -m pytest -q` (95 passed, 1 opt-in skipped),
+`python -m ruff check .`, `python -m ruff format --check .`,
+`python -m mypy src`, `python -m build` (all passed), and
+`python validation/controlled_windows.py --disposable-github-runner` (all five
+expected classifications matched; rollback verified; exit 0). Every scenario
+used a fresh product subprocess running `python -m sigdoctor check <absolute
+examples/powershell_script.yml> --json`; the lab never called the evaluator directly.
+
+The regular [Linux/Windows CI run 38596950906](https://github.com/GAWI01/sigdoctor/actions/runs/38596950906)
+also completed successfully, confirming the Linux type-check correction in the
+actual CI environment. The existing opt-in Windows integration test passed
+separately on the developer host. No developer-host policy, ACL or log was altered.
+
+Decision: VALIDATED — READY FOR REVIEW within the current PowerShell scope.
+Remaining real-host limits are listed in WINDOWS_VALIDATION.md; this does not
+establish detection effectiveness or justify product expansion.

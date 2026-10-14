@@ -1,6 +1,7 @@
 include README.md LICENSE SECURITY.md CONTRIBUTING.md
 include requirements.lock requirements-dev.lock
 recursive-include docs *.md
+recursive-include docs/validation *.json
 recursive-include examples *.yml
 recursive-include tests *.py
 recursive-include validation *.py

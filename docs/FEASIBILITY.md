@@ -1,5 +1,11 @@
 # SigDoctor feasibility — 2026-10-14
 
+Follow-up: controlled real Windows A/B/C/D1/D2 CLI scenarios subsequently matched
+the expected readiness statuses on a disposable Windows Server 2025 host.
+See [Windows validation](WINDOWS_VALIDATION.md) for independent evidence,
+rollback and limits. The original conclusion remains a deliberately narrow
+scope; these experiments do not establish end-to-end detection effectiveness.
+
 ## Hypothesis and inspection
 
 A supported Sigma rule can be mapped to concrete telemetry requirements and

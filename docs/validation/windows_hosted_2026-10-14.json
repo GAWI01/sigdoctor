@@ -1,0 +1,780 @@
+{
+  "schema_version": "1",
+  "product_commit": "432aeba43de12a570ea836479fa1171a85602429",
+  "run_url": "https://github.com/GAWI01/sigdoctor/actions/runs/38596950991",
+  "started_at": "2026-10-14T16:19:24.983290+00:00",
+  "scenarios": [
+    {
+      "scenario": "C",
+      "known_state": {
+        "policy": {
+          "state": "PRESENT",
+          "kind": "REG_DWORD",
+          "value": 1,
+          "native_exit": 0
+        },
+        "channel": {
+          "name": "Microsoft-Windows-PowerShell/Operational",
+          "enabled": true
+        },
+        "event": {
+          "native_exit": 0,
+          "state": "NOT_OBSERVED",
+          "count": 0
+        },
+        "setup": "Enabled before first recent event; no log clearing"
+      },
+      "expected": "PARTIAL",
+      "actual": "PARTIAL",
+      "matched": true,
+      "exit_code": 0,
+      "cli_assessment": {
+        "rule": {
+          "id": "5c0161e5-aa7a-46c8-9572-b157535182a6",
+          "title": "Example Script Block Marker",
+          "product": "windows",
+          "category": "ps_script",
+          "service": null,
+          "definition": "Script Block Logging must be enabled.",
+          "required_fields": [
+            "ScriptBlockText"
+          ],
+          "display_fields": [
+            "Computer"
+          ],
+          "tags": [
+            "attack.execution",
+            "attack.t1059.001"
+          ],
+          "mitre_techniques": [
+            "T1059.001"
+          ],
+          "event_ids": [],
+          "sha256": "9fd1f05acdf74a2d98b928cba92695b8390f8479d9f568cf42c5907dec9d854f",
+          "issues": []
+        },
+        "requirements": [
+          {
+            "capability": "ScriptBlockText",
+            "provenance": "DIRECT",
+            "reason": "Referenced by the active detection condition."
+          },
+          {
+            "capability": "script_block_logging",
+            "provenance": "DERIVED",
+            "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+          },
+          {
+            "capability": "powershell_channel",
+            "provenance": "DERIVED",
+            "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+          },
+          {
+            "capability": "event_4104",
+            "provenance": "DERIVED",
+            "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+          },
+          {
+            "capability": "field_ScriptBlockText",
+            "provenance": "DERIVED",
+            "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+          }
+        ],
+        "evidence": [
+          {
+            "capability": "script_block_logging",
+            "state": "ENABLED",
+            "source": "registry:HKLM(64-bit)\\SOFTWARE\\Policies\\Microsoft\\Windows\\PowerShell\\ScriptBlockLogging\\EnableScriptBlockLogging",
+            "observed_at": "2026-10-14T16:19:29.978467+00:00",
+            "details": {
+              "value": 1,
+              "meaning": "Machine policy; absent/invalid is unknown, not disabled."
+            },
+            "error_code": null
+          },
+          {
+            "capability": "powershell_channel",
+            "state": "ENABLED",
+            "source": "wevtutil:gl:Microsoft-Windows-PowerShell/Operational",
+            "observed_at": "2026-10-14T16:19:29.978467+00:00",
+            "details": {
+              "channel": "Microsoft-Windows-PowerShell/Operational"
+            },
+            "error_code": null
+          },
+          {
+            "capability": "event_4104",
+            "state": "NOT_OBSERVED",
+            "source": "wevtutil:qe:Microsoft-Windows-PowerShell/Operational",
+            "observed_at": "2026-10-14T16:19:29.978467+00:00",
+            "details": {
+              "event_id": 4104,
+              "window_hours": 24,
+              "sample_limit": 1
+            },
+            "error_code": null
+          },
+          {
+            "capability": "field_ScriptBlockText",
+            "state": "UNKNOWN",
+            "source": "wevtutil:qe:Microsoft-Windows-PowerShell/Operational",
+            "observed_at": "2026-10-14T16:19:29.978467+00:00",
+            "details": {
+              "field": "ScriptBlockText"
+            },
+            "error_code": null
+          }
+        ],
+        "scope": "Windows PowerShell 5.1, machine policy, native plaintext 4104 ScriptBlockText only",
+        "limitations": [
+          "READY means scoped telemetry capability, not rule correctness, forwarding, backend translation or detection effectiveness.",
+          "PowerShell 7, other providers, user-only policy and arbitrary normalized fields are not assessed.",
+          "Newest matching event only, within 24 hours; absence of an event is not evidence of disabled logging.",
+          "Current policy and historical observation are not an atomic snapshot; running sessions may cache earlier policy.",
+          "No guarantee of complete capture, script-fragment reassembly or resistance to tampering; encrypted content is unresolved."
+        ],
+        "result": {
+          "status": "PARTIAL",
+          "reasons": [
+            {
+              "code": "OBSERVATION_INCOMPLETE",
+              "message": "Logging and channel enabled, but recent usable ScriptBlockText telemetry is unverified. No recent event does not mean disabled logging."
+            }
+          ]
+        },
+        "schema_version": "1"
+      }
+    },
+    {
+      "scenario": "A",
+      "known_state": {
+        "policy": {
+          "state": "PRESENT",
+          "kind": "REG_DWORD",
+          "value": 1,
+          "native_exit": 0
+        },
+        "channel": {
+          "name": "Microsoft-Windows-PowerShell/Operational",
+          "enabled": true
+        },
+        "event": {
+          "native_exit": 0,
+          "state": "OBSERVED",
+          "count": 1,
+          "event_id": "4104",
+          "provider": "Microsoft-Windows-PowerShell",
+          "timestamp": "2026-10-14T16:19:30.9347987Z",
+          "usable_plaintext": true
+        },
+        "generation": "Fresh 64-bit Windows PowerShell 5.1 Write-Output with unique benign marker",
+        "marker_proof": {
+          "marker_event_observed": true,
+          "matching_count": 1,
+          "event_id": 4104,
+          "provider": "Microsoft-Windows-PowerShell"
+        },
+        "marker_sha256": "c629b6054b82ac8728841aee9a1cee567cae834a68224d0809fc3c785fd0cc18"
+      },
+      "expected": "READY",
+      "actual": "READY",
+      "matched": true,
+      "exit_code": 0,
+      "cli_assessment": {
+        "rule": {
+          "id": "5c0161e5-aa7a-46c8-9572-b157535182a6",
+          "title": "Example Script Block Marker",
+          "product": "windows",
+          "category": "ps_script",
+          "service": null,
+          "definition": "Script Block Logging must be enabled.",
+          "required_fields": [
+            "ScriptBlockText"
+          ],
+          "display_fields": [
+            "Computer"
+          ],
+          "tags": [
+            "attack.execution",
+            "attack.t1059.001"
+          ],
+          "mitre_techniques": [
+            "T1059.001"
+          ],
+          "event_ids": [],
+          "sha256": "9fd1f05acdf74a2d98b928cba92695b8390f8479d9f568cf42c5907dec9d854f",
+          "issues": []
+        },
+        "requirements": [
+          {
+            "capability": "ScriptBlockText",
+            "provenance": "DIRECT",
+            "reason": "Referenced by the active detection condition."
+          },
+          {
+            "capability": "script_block_logging",
+            "provenance": "DERIVED",
+            "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+          },
+          {
+            "capability": "powershell_channel",
+            "provenance": "DERIVED",
+            "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+          },
+          {
+            "capability": "event_4104",
+            "provenance": "DERIVED",
+            "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+          },
+          {
+            "capability": "field_ScriptBlockText",
+            "provenance": "DERIVED",
+            "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+          }
+        ],
+        "evidence": [
+          {
+            "capability": "script_block_logging",
+            "state": "ENABLED",
+            "source": "registry:HKLM(64-bit)\\SOFTWARE\\Policies\\Microsoft\\Windows\\PowerShell\\ScriptBlockLogging\\EnableScriptBlockLogging",
+            "observed_at": "2026-10-14T16:19:31.209916+00:00",
+            "details": {
+              "value": 1,
+              "meaning": "Machine policy; absent/invalid is unknown, not disabled."
+            },
+            "error_code": null
+          },
+          {
+            "capability": "powershell_channel",
+            "state": "ENABLED",
+            "source": "wevtutil:gl:Microsoft-Windows-PowerShell/Operational",
+            "observed_at": "2026-10-14T16:19:31.209916+00:00",
+            "details": {
+              "channel": "Microsoft-Windows-PowerShell/Operational"
+            },
+            "error_code": null
+          },
+          {
+            "capability": "event_4104",
+            "state": "OBSERVED",
+            "source": "wevtutil:qe:Microsoft-Windows-PowerShell/Operational",
+            "observed_at": "2026-10-14T16:19:31.209916+00:00",
+            "details": {
+              "event_id": 4104,
+              "window_hours": 24,
+              "sample_limit": 1,
+              "latest_timestamp": "2026-10-14T16:19:30.934798+00:00"
+            },
+            "error_code": null
+          },
+          {
+            "capability": "field_ScriptBlockText",
+            "state": "OBSERVED",
+            "source": "wevtutil:qe:Microsoft-Windows-PowerShell/Operational",
+            "observed_at": "2026-10-14T16:19:31.209916+00:00",
+            "details": {
+              "field": "ScriptBlockText",
+              "nonempty_plaintext": true
+            },
+            "error_code": null
+          }
+        ],
+        "scope": "Windows PowerShell 5.1, machine policy, native plaintext 4104 ScriptBlockText only",
+        "limitations": [
+          "READY means scoped telemetry capability, not rule correctness, forwarding, backend translation or detection effectiveness.",
+          "PowerShell 7, other providers, user-only policy and arbitrary normalized fields are not assessed.",
+          "Newest matching event only, within 24 hours; absence of an event is not evidence of disabled logging.",
+          "Current policy and historical observation are not an atomic snapshot; running sessions may cache earlier policy.",
+          "No guarantee of complete capture, script-fragment reassembly or resistance to tampering; encrypted content is unresolved."
+        ],
+        "result": {
+          "status": "READY",
+          "reasons": [
+            {
+              "code": "CAPABILITIES_VERIFIED",
+              "message": "Machine logging and channel enabled; recent native 4104 plaintext ScriptBlockText observed."
+            }
+          ]
+        },
+        "schema_version": "1"
+      }
+    },
+    {
+      "scenario": "B",
+      "known_state": {
+        "policy": {
+          "state": "PRESENT",
+          "kind": "REG_DWORD",
+          "value": 0,
+          "native_exit": 0
+        },
+        "channel": {
+          "name": "Microsoft-Windows-PowerShell/Operational",
+          "enabled": true
+        },
+        "event": {
+          "native_exit": 0,
+          "state": "OBSERVED",
+          "count": 1,
+          "event_id": "4104",
+          "provider": "Microsoft-Windows-PowerShell",
+          "timestamp": "2026-10-14T16:19:30.9347987Z",
+          "usable_plaintext": true
+        },
+        "setup": "Explicit machine REG_DWORD 0; prior events retained"
+      },
+      "expected": "BLIND",
+      "actual": "BLIND",
+      "matched": true,
+      "exit_code": 0,
+      "cli_assessment": {
+        "rule": {
+          "id": "5c0161e5-aa7a-46c8-9572-b157535182a6",
+          "title": "Example Script Block Marker",
+          "product": "windows",
+          "category": "ps_script",
+          "service": null,
+          "definition": "Script Block Logging must be enabled.",
+          "required_fields": [
+            "ScriptBlockText"
+          ],
+          "display_fields": [
+            "Computer"
+          ],
+          "tags": [
+            "attack.execution",
+            "attack.t1059.001"
+          ],
+          "mitre_techniques": [
+            "T1059.001"
+          ],
+          "event_ids": [],
+          "sha256": "9fd1f05acdf74a2d98b928cba92695b8390f8479d9f568cf42c5907dec9d854f",
+          "issues": []
+        },
+        "requirements": [
+          {
+            "capability": "ScriptBlockText",
+            "provenance": "DIRECT",
+            "reason": "Referenced by the active detection condition."
+          },
+          {
+            "capability": "script_block_logging",
+            "provenance": "DERIVED",
+            "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+          },
+          {
+            "capability": "powershell_channel",
+            "provenance": "DERIVED",
+            "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+          },
+          {
+            "capability": "event_4104",
+            "provenance": "DERIVED",
+            "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+          },
+          {
+            "capability": "field_ScriptBlockText",
+            "provenance": "DERIVED",
+            "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+          }
+        ],
+        "evidence": [
+          {
+            "capability": "script_block_logging",
+            "state": "DISABLED",
+            "source": "registry:HKLM(64-bit)\\SOFTWARE\\Policies\\Microsoft\\Windows\\PowerShell\\ScriptBlockLogging\\EnableScriptBlockLogging",
+            "observed_at": "2026-10-14T16:19:31.525016+00:00",
+            "details": {
+              "value": 0,
+              "meaning": "Machine policy; absent/invalid is unknown, not disabled."
+            },
+            "error_code": null
+          },
+          {
+            "capability": "powershell_channel",
+            "state": "ENABLED",
+            "source": "wevtutil:gl:Microsoft-Windows-PowerShell/Operational",
+            "observed_at": "2026-10-14T16:19:31.525016+00:00",
+            "details": {
+              "channel": "Microsoft-Windows-PowerShell/Operational"
+            },
+            "error_code": null
+          },
+          {
+            "capability": "event_4104",
+            "state": "OBSERVED",
+            "source": "wevtutil:qe:Microsoft-Windows-PowerShell/Operational",
+            "observed_at": "2026-10-14T16:19:31.525016+00:00",
+            "details": {
+              "event_id": 4104,
+              "window_hours": 24,
+              "sample_limit": 1,
+              "latest_timestamp": "2026-10-14T16:19:30.934798+00:00"
+            },
+            "error_code": null
+          },
+          {
+            "capability": "field_ScriptBlockText",
+            "state": "OBSERVED",
+            "source": "wevtutil:qe:Microsoft-Windows-PowerShell/Operational",
+            "observed_at": "2026-10-14T16:19:31.525016+00:00",
+            "details": {
+              "field": "ScriptBlockText",
+              "nonempty_plaintext": true
+            },
+            "error_code": null
+          }
+        ],
+        "scope": "Windows PowerShell 5.1, machine policy, native plaintext 4104 ScriptBlockText only",
+        "limitations": [
+          "READY means scoped telemetry capability, not rule correctness, forwarding, backend translation or detection effectiveness.",
+          "PowerShell 7, other providers, user-only policy and arbitrary normalized fields are not assessed.",
+          "Newest matching event only, within 24 hours; absence of an event is not evidence of disabled logging.",
+          "Current policy and historical observation are not an atomic snapshot; running sessions may cache earlier policy.",
+          "No guarantee of complete capture, script-fragment reassembly or resistance to tampering; encrypted content is unresolved."
+        ],
+        "result": {
+          "status": "BLIND",
+          "reasons": [
+            {
+              "code": "CAPABILITY_DISABLED",
+              "message": "Required capability script_block_logging is explicitly disabled for this provider."
+            }
+          ]
+        },
+        "schema_version": "1"
+      }
+    },
+    {
+      "scenario": "D1",
+      "known_state": {
+        "policy": {
+          "state": "MISSING",
+          "kind": null,
+          "value": null,
+          "native_exit": 1
+        },
+        "channel": {
+          "name": "Microsoft-Windows-PowerShell/Operational",
+          "enabled": true
+        },
+        "event": {
+          "native_exit": 0,
+          "state": "OBSERVED",
+          "count": 1,
+          "event_id": "4104",
+          "provider": "Microsoft-Windows-PowerShell",
+          "timestamp": "2026-10-14T16:19:30.9347987Z",
+          "usable_plaintext": true
+        },
+        "setup": "Only named machine value removed; recent events retained"
+      },
+      "expected": "UNKNOWN",
+      "actual": "UNKNOWN",
+      "matched": true,
+      "exit_code": 0,
+      "cli_assessment": {
+        "rule": {
+          "id": "5c0161e5-aa7a-46c8-9572-b157535182a6",
+          "title": "Example Script Block Marker",
+          "product": "windows",
+          "category": "ps_script",
+          "service": null,
+          "definition": "Script Block Logging must be enabled.",
+          "required_fields": [
+            "ScriptBlockText"
+          ],
+          "display_fields": [
+            "Computer"
+          ],
+          "tags": [
+            "attack.execution",
+            "attack.t1059.001"
+          ],
+          "mitre_techniques": [
+            "T1059.001"
+          ],
+          "event_ids": [],
+          "sha256": "9fd1f05acdf74a2d98b928cba92695b8390f8479d9f568cf42c5907dec9d854f",
+          "issues": []
+        },
+        "requirements": [
+          {
+            "capability": "ScriptBlockText",
+            "provenance": "DIRECT",
+            "reason": "Referenced by the active detection condition."
+          },
+          {
+            "capability": "script_block_logging",
+            "provenance": "DERIVED",
+            "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+          },
+          {
+            "capability": "powershell_channel",
+            "provenance": "DERIVED",
+            "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+          },
+          {
+            "capability": "event_4104",
+            "provenance": "DERIVED",
+            "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+          },
+          {
+            "capability": "field_ScriptBlockText",
+            "provenance": "DERIVED",
+            "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+          }
+        ],
+        "evidence": [
+          {
+            "capability": "script_block_logging",
+            "state": "UNKNOWN",
+            "source": "registry:HKLM(64-bit)\\SOFTWARE\\Policies\\Microsoft\\Windows\\PowerShell\\ScriptBlockLogging\\EnableScriptBlockLogging",
+            "observed_at": "2026-10-14T16:19:31.837444+00:00",
+            "details": {
+              "value": null,
+              "meaning": "Machine policy; absent/invalid is unknown, not disabled."
+            },
+            "error_code": null
+          },
+          {
+            "capability": "powershell_channel",
+            "state": "ENABLED",
+            "source": "wevtutil:gl:Microsoft-Windows-PowerShell/Operational",
+            "observed_at": "2026-10-14T16:19:31.837444+00:00",
+            "details": {
+              "channel": "Microsoft-Windows-PowerShell/Operational"
+            },
+            "error_code": null
+          },
+          {
+            "capability": "event_4104",
+            "state": "OBSERVED",
+            "source": "wevtutil:qe:Microsoft-Windows-PowerShell/Operational",
+            "observed_at": "2026-10-14T16:19:31.837444+00:00",
+            "details": {
+              "event_id": 4104,
+              "window_hours": 24,
+              "sample_limit": 1,
+              "latest_timestamp": "2026-10-14T16:19:30.934798+00:00"
+            },
+            "error_code": null
+          },
+          {
+            "capability": "field_ScriptBlockText",
+            "state": "OBSERVED",
+            "source": "wevtutil:qe:Microsoft-Windows-PowerShell/Operational",
+            "observed_at": "2026-10-14T16:19:31.837444+00:00",
+            "details": {
+              "field": "ScriptBlockText",
+              "nonempty_plaintext": true
+            },
+            "error_code": null
+          }
+        ],
+        "scope": "Windows PowerShell 5.1, machine policy, native plaintext 4104 ScriptBlockText only",
+        "limitations": [
+          "READY means scoped telemetry capability, not rule correctness, forwarding, backend translation or detection effectiveness.",
+          "PowerShell 7, other providers, user-only policy and arbitrary normalized fields are not assessed.",
+          "Newest matching event only, within 24 hours; absence of an event is not evidence of disabled logging.",
+          "Current policy and historical observation are not an atomic snapshot; running sessions may cache earlier policy.",
+          "No guarantee of complete capture, script-fragment reassembly or resistance to tampering; encrypted content is unresolved."
+        ],
+        "result": {
+          "status": "UNKNOWN",
+          "reasons": [
+            {
+              "code": "INSUFFICIENT_EVIDENCE",
+              "message": "Machine Script Block Logging policy and channel state must both be verified; events cannot substitute for missing configuration evidence."
+            }
+          ]
+        },
+        "schema_version": "1"
+      }
+    },
+    {
+      "scenario": "D2",
+      "known_state": {
+        "policy": {
+          "state": "PERMISSION_DENIED",
+          "native_error": 5,
+          "native_exit": 1
+        },
+        "channel": {
+          "name": "Microsoft-Windows-PowerShell/Operational",
+          "enabled": true
+        },
+        "event": {
+          "native_exit": 0,
+          "state": "OBSERVED",
+          "count": 1,
+          "event_id": "4104",
+          "provider": "Microsoft-Windows-PowerShell",
+          "timestamp": "2026-10-14T16:19:32.3028029Z",
+          "usable_plaintext": true
+        },
+        "setup": "Temporary deny Registry QueryValues to current lab SID; known value was 1 before deny"
+      },
+      "expected": "UNKNOWN",
+      "actual": "UNKNOWN",
+      "matched": true,
+      "exit_code": 0,
+      "cli_assessment": {
+        "rule": {
+          "id": "5c0161e5-aa7a-46c8-9572-b157535182a6",
+          "title": "Example Script Block Marker",
+          "product": "windows",
+          "category": "ps_script",
+          "service": null,
+          "definition": "Script Block Logging must be enabled.",
+          "required_fields": [
+            "ScriptBlockText"
+          ],
+          "display_fields": [
+            "Computer"
+          ],
+          "tags": [
+            "attack.execution",
+            "attack.t1059.001"
+          ],
+          "mitre_techniques": [
+            "T1059.001"
+          ],
+          "event_ids": [],
+          "sha256": "9fd1f05acdf74a2d98b928cba92695b8390f8479d9f568cf42c5907dec9d854f",
+          "issues": []
+        },
+        "requirements": [
+          {
+            "capability": "ScriptBlockText",
+            "provenance": "DIRECT",
+            "reason": "Referenced by the active detection condition."
+          },
+          {
+            "capability": "script_block_logging",
+            "provenance": "DERIVED",
+            "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+          },
+          {
+            "capability": "powershell_channel",
+            "provenance": "DERIVED",
+            "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+          },
+          {
+            "capability": "event_4104",
+            "provenance": "DERIVED",
+            "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+          },
+          {
+            "capability": "field_ScriptBlockText",
+            "provenance": "DERIVED",
+            "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+          }
+        ],
+        "evidence": [
+          {
+            "capability": "script_block_logging",
+            "state": "UNKNOWN",
+            "source": "registry:HKLM(64-bit)\\SOFTWARE\\Policies\\Microsoft\\Windows\\PowerShell\\ScriptBlockLogging\\EnableScriptBlockLogging",
+            "observed_at": "2026-10-14T16:19:32.576686+00:00",
+            "details": {},
+            "error_code": "PERMISSION_DENIED"
+          },
+          {
+            "capability": "powershell_channel",
+            "state": "ENABLED",
+            "source": "wevtutil:gl:Microsoft-Windows-PowerShell/Operational",
+            "observed_at": "2026-10-14T16:19:32.576686+00:00",
+            "details": {
+              "channel": "Microsoft-Windows-PowerShell/Operational"
+            },
+            "error_code": null
+          },
+          {
+            "capability": "event_4104",
+            "state": "OBSERVED",
+            "source": "wevtutil:qe:Microsoft-Windows-PowerShell/Operational",
+            "observed_at": "2026-10-14T16:19:32.576686+00:00",
+            "details": {
+              "event_id": 4104,
+              "window_hours": 24,
+              "sample_limit": 1,
+              "latest_timestamp": "2026-10-14T16:19:32.302802+00:00"
+            },
+            "error_code": null
+          },
+          {
+            "capability": "field_ScriptBlockText",
+            "state": "OBSERVED",
+            "source": "wevtutil:qe:Microsoft-Windows-PowerShell/Operational",
+            "observed_at": "2026-10-14T16:19:32.576686+00:00",
+            "details": {
+              "field": "ScriptBlockText",
+              "nonempty_plaintext": true
+            },
+            "error_code": null
+          }
+        ],
+        "scope": "Windows PowerShell 5.1, machine policy, native plaintext 4104 ScriptBlockText only",
+        "limitations": [
+          "READY means scoped telemetry capability, not rule correctness, forwarding, backend translation or detection effectiveness.",
+          "PowerShell 7, other providers, user-only policy and arbitrary normalized fields are not assessed.",
+          "Newest matching event only, within 24 hours; absence of an event is not evidence of disabled logging.",
+          "Current policy and historical observation are not an atomic snapshot; running sessions may cache earlier policy.",
+          "No guarantee of complete capture, script-fragment reassembly or resistance to tampering; encrypted content is unresolved."
+        ],
+        "result": {
+          "status": "UNKNOWN",
+          "reasons": [
+            {
+              "code": "INSUFFICIENT_EVIDENCE",
+              "message": "Machine Script Block Logging policy and channel state must both be verified; events cannot substitute for missing configuration evidence."
+            }
+          ]
+        },
+        "schema_version": "1"
+      }
+    }
+  ],
+  "rollback": {
+    "verified": true,
+    "policy": {
+      "state": "MISSING",
+      "kind": null,
+      "value": null,
+      "native_exit": 1
+    },
+    "channel": {
+      "name": "Microsoft-Windows-PowerShell/Operational",
+      "enabled": true
+    },
+    "channel_acl_restored": true,
+    "registry_acl_restored": true,
+    "created_empty_keys_removed": 2
+  },
+  "environment": {
+    "caption": "Microsoft Windows Server 2025 Datacenter",
+    "version": "10.0.26100",
+    "build": "26100",
+    "ubr": 33438,
+    "architecture": "64-bit",
+    "PowerShellVersion": "5.1.26100.33438",
+    "PSEdition": "Desktop",
+    "Is64Bit": true
+  },
+  "baseline": {
+    "policy": {
+      "state": "MISSING",
+      "kind": null,
+      "value": null,
+      "native_exit": 1
+    },
+    "channel": {
+      "name": "Microsoft-Windows-PowerShell/Operational",
+      "enabled": true
+    }
+  },
+  "completed_at": "2026-10-14T16:19:33.144017+00:00",
+  "success": true
+}

@@ -56,11 +56,11 @@ a failed validation run; never silently claim a clean restoration.
 
 | Scenario | Known state | Expected | Actual | Verified |
 |---|---|---|---|---|
-| A | Machine DWORD 1, channel enabled, fresh PS5.1 action emits plaintext 4104 | READY | Pending disposable run | NOT VERIFIED |
-| B | Machine DWORD 0; prior events may still exist | BLIND | Pending disposable run | NOT VERIFIED |
-| C | DWORD 1 + enabled channel; no recent event, or independently confirmed event-read denial | PARTIAL | Pending disposable run | NOT VERIFIED |
-| D1 | Independently confirmed missing machine policy; enabled channel and recent field | UNKNOWN | UNKNOWN on developer host | VERIFIED for missing-policy gap |
-| D2 | Explicit logging policy exists but registry query is denied; channel remains enabled | UNKNOWN | Pending disposable run | NOT VERIFIED |
+| A | Machine DWORD 1, channel enabled, fresh PS5.1 action emits plaintext 4104 | READY | READY | VERIFIED on disposable VM |
+| B | Machine DWORD 0; prior plaintext events retained | BLIND | BLIND | VERIFIED on disposable VM |
+| C | DWORD 1 + enabled channel; no recent 4104 before first test action | PARTIAL | PARTIAL | VERIFIED on disposable VM |
+| D1 | Missing machine policy; enabled channel and recent field | UNKNOWN | UNKNOWN | VERIFIED on developer host and disposable VM |
+| D2 | Existing DWORD 1, but Registry QueryValues denied; channel remains enabled | UNKNOWN | UNKNOWN | VERIFIED on disposable VM |
 
 Run C before A when testing natural absence; use fresh PowerShell processes after
 policy transitions. Execute the actual installed `sigdoctor check` CLI in every
@@ -84,6 +84,70 @@ independent before/after oracle and real CLI response.
 
 Limit: this proves a naturally present missing-policy gap; it does not prove the
 denied-permission path or the enabled/disabled states.
+
+## Executed controlled experiment
+
+[GitHub Actions run 38596950991](https://github.com/GAWI01/sigdoctor/actions/runs/38596950991)
+passed on a fresh Windows Server 2025 Datacenter x64 VM, Windows version
+10.0.26100, build **26100.33438**, Windows PowerShell **5.1.26100.33438** Desktop,
+64-bit. Product/test commit: `432aeba43de12a570ea836479fa1171a85602429`.
+Experiment ran from 2026-10-14 16:19:24 to 16:19:33 UTC. The normal
+[Windows/Linux checks](https://github.com/GAWI01/sigdoctor/actions/runs/38596950906)
+also passed. This is hosted Server evidence, not a claim that all Windows
+editions/builds or non-administrative caller contexts have been validated.
+
+All scenarios called `python -m sigdoctor check examples/powershell_script.yml
+--json` as an external process using the installed package, real pySigma adapter,
+profile and native probes. The fixture was unchanged. Independent setup oracles
+used native `reg.exe` readback, channel XML, a separate recent-event read and a
+Get-WinEvent marker check. No evaluator/probe was mocked in the experiment.
+The [complete metadata-only report](validation/windows_hosted_2026-10-14.json)
+contains each known state, CLI assessment and rollback result.
+
+* **C ran first.** Original logging policy was absent. After native DWORD 1 and
+  channel enablement, a native event query returned zero recent 4104 records.
+  No logs were cleared and no clock was changed. CLI evidence was policy ENABLED,
+  channel ENABLED, event NOT_OBSERVED, field UNKNOWN; result PARTIAL. This is a
+  legitimate newly enabled configuration before its first observed event. The
+  planned alternative event-read-denial branch was not needed or executed.
+* **A:** a fresh 64-bit Windows PowerShell process executed Write-Output with a
+  unique benign marker. A separate Get-WinEvent query confirmed one matching
+  4104; the oracle script read the marker from its environment rather than
+  embedding it, so logging the oracle could not satisfy this check. The newest
+  event had usable plaintext. CLI evidence was ENABLED/ENABLED/OBSERVED/OBSERVED;
+  result READY. Marker text and raw event contents were not retained.
+* **B:** native DWORD 0 was confirmed while the channel remained enabled and A's
+  plaintext events still existed. CLI policy was DISABLED despite OBSERVED event
+  and field evidence; result BLIND. This demonstrates that retained events do not
+  override confirmed disabled full-logging configuration.
+* **D1:** only the machine policy value was removed and absence independently
+  confirmed. The enabled channel and recent plaintext remained observable; CLI
+  result UNKNOWN, policy UNKNOWN. Absence was not reported as disabled.
+* **D2:** DWORD 1 was confirmed, then the current disposable-runner account was
+  temporarily denied Registry QueryValues on the specific policy key. Native
+  Win32 read returned access-denied code 5; channel/event reads still succeeded.
+  CLI policy UNKNOWN with PERMISSION_DENIED, result UNKNOWN. It was never BLIND
+  or DISABLED merely because the query was denied.
+
+No classification discrepancy occurred. The evaluator/telemetry interpretation
+needed no change. The only product-code correction was the explicit non-Windows
+registry boundary guard needed by the existing cross-platform type check.
+
+### Rollback evidence and limitations
+
+The runner restored and read back the registry DACL, original policy absence,
+original enabled channel and original channel ACL, then removed two newly created
+empty policy keys. The report records rollback verified=true. The VM was discarded
+at job completion. No developer-machine settings were changed. The review's
+registry-ACL readback gap was corrected before the hosted experiment.
+
+Not verified here: protected/encrypted-event scenarios; the alternate event-read
+permission path for C; policy propagation races/cached old sessions; every Windows
+version; uniform behavior across real standard-user accounts; tamper resistance,
+forwarding, normalization, fragment reassembly or detection effectiveness. The
+permission experiment uses a real temporary deny ACL on the hosted administrator
+account, not a separate non-administrator deployment. No upstream rule engine was
+executed and the benign marker is not an attack simulation.
 
 ## Manual alternative — approval required for developer-host changes
 
@@ -146,6 +210,12 @@ No such approval has been assumed or used.
 * [Windows Sandbox requirements](https://learn.microsoft.com/en-us/windows/security/application-security/application-isolation/windows-sandbox/)
 * [Disposable GitHub-hosted Windows VMs](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)
 
-## Current decision
+## Decision
 
-VALIDATION INCOMPLETE — D1 matches, A/B/C/D2 await actual disposable-host evidence.
+The known real-host states support the narrow status semantics, including a
+natural PARTIAL state and genuine access-denied UNKNOWN. This strengthens the
+existing PowerShell hypothesis sufficiently for review within the stated scope.
+It does not justify additional telemetry families or detection-effectiveness
+claims. No merge, publication, deployment or release is included.
+
+VALIDATED — READY FOR REVIEW
