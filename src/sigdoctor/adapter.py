@@ -225,6 +225,13 @@ def load_rule(path: Path) -> RuleRequirements:
             )
         rule = SigmaRule.from_dict(data)
         fields, events, issues = _active_requirements(rule)
+        if rule.taxonomy != "sigma":
+            issues += (
+                Issue(
+                    "UNSUPPORTED_TAXONOMY",
+                    "Only the default Sigma taxonomy is supported by the native telemetry profile.",
+                ),
+            )
         tags = tuple(str(tag) for tag in rule.tags)
         return RuleRequirements(
             str(rule.id) if rule.id else None,

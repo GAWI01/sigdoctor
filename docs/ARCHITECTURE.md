@@ -38,6 +38,9 @@ codes and sanitized messages, never raw YAML/event bodies or traceback by defaul
 Supported source: product windows with category ps_script and no service, or
 service powershell with explicit 4104 and no conflicting category. It means a
 Windows PowerShell 5.1 assessment, never all installed PowerShell providers.
+Only the default `sigma` taxonomy, absent or explicit, is supported. Other
+taxonomies return UNKNOWN before probing because they can redefine field names,
+values and logsource names; no taxonomy transformation is performed.
 Native ScriptBlockText string predicates, AND/OR/NOT on that field, normal string
 wildcards and contains/startswith/endswith/all are sufficient. Explicit EventID
 is supported only as positive equality to 4104 in a conjunction; ambiguous event

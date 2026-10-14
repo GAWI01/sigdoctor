@@ -18,6 +18,19 @@ def test_metadata_and_display_fields_remain_separate(rule_path):
     assert len(rule.sha256) == 64
 
 
+@pytest.mark.parametrize("taxonomy", ["ecs", "custom_native", "null"])
+def test_non_default_taxonomy_is_unknown_without_probes(rule_path, rule_text, taxonomy):
+    rule_path.write_text(f"taxonomy: {taxonomy}\n" + rule_text, encoding="utf-8")
+    assessment = check_rule(rule_path, probe=NoProbe())
+    assert assessment.result.status == "UNKNOWN"
+    assert any(issue.code == "UNSUPPORTED_TAXONOMY" for issue in assessment.result.reasons)
+
+
+def test_explicit_sigma_taxonomy_retains_native_support(rule_path, rule_text):
+    rule_path.write_text("taxonomy: sigma\n" + rule_text, encoding="utf-8")
+    assert check_rule(rule_path, probe=FakeHost()).result.status == "READY"
+
+
 def test_unused_selection_does_not_add_requirements(rule_path, rule_text):
     rule_path.write_text(
         rule_text.replace(

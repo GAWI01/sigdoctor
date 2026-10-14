@@ -175,3 +175,68 @@ separately on the developer host. No developer-host policy, ACL or log was alter
 Decision: VALIDATED — READY FOR REVIEW within the current PowerShell scope.
 Remaining real-host limits are listed in WINDOWS_VALIDATION.md; this does not
 establish detection effectiveness or justify product expansion.
+
+## Independent pre-merge review, 2026-10-14
+
+Reviewed the complete `main..12485b476d232aa5137b300a037dd1d972fcc086` diff
+against the actual source, workflows, package contents and committed evidence.
+Three fresh independent reviews covered the adapter, Windows probes/lab, and
+OSS packaging/CI/privacy. No CRITICAL finding was identified. This is a review
+of the narrow prototype, not an assurance of detection effectiveness.
+
+One IMPORTANT issue was reproduced and fixed: the adapter discarded a rule's
+taxonomy, allowing a non-default taxonomy to receive native READY or BLIND.
+[The Sigma specification](https://sigmahq.io/sigma-specification/specification/sigma-rules-specification.html#taxonomy)
+allows taxonomies to redefine fields, values and logsource names. The native
+profile must therefore accept only the absent/default `sigma` taxonomy.
+Non-default or explicit null taxonomy now returns UNKNOWN with
+UNSUPPORTED_TAXONOMY before host probing. No taxonomy transformation was added.
+The new `ecs` and `custom_native` regression cases failed before the fix by
+reaching a probe that must never be called; all four taxonomy cases passed after
+the fix, including null and explicit `sigma`. Independent re-review confirmed
+the fix and passed 66 focused adapter/workflow/CLI tests.
+
+MINOR findings retained for later rather than changing unrelated code:
+
+| Location | Problem and consequence | Suggested later correction |
+|---|---|---|
+| src/sigdoctor/cli.py:24,39 | argparse accepts `--js` as `--json`, but literal argument inspection selects terminal output; abbreviated automation arguments are inconsistent. Documented `--json` works. | Use parsed `options.json` for successful assessments or explicitly disable abbreviations throughout the parsers. |
+| docs/WINDOWS_VALIDATION.md:67-68 | The listed fixture hash describes LF bytes; the hosted checkout's CRLF fixture has a different raw-byte hash. Content matches, but provenance appears inconsistent. | Label both newline-specific byte hashes explicitly. |
+| MANIFEST.in:1; docs/ARCHITECTURE.md:3; docs/IMPLEMENTATION_PLAN.md:7 | Source-archive documentation references project-context files absent from the sdist. Runtime/install behavior is unaffected. | Link repository context or include the referenced documents if appropriate. |
+| .github/workflows/windows-validation.yml:4; validation/controlled_windows.py:38 | Controlled validation is deliberately limited to this development branch and cannot run on main after a merge. Regular CI remains active. | Document the one-time branch restriction and a separately authorized future disposable rerun procedure; retain the normal-host refusal. |
+
+Windows evidence supports the five documented configurations within the stated
+provider, machine-policy, plaintext-field and snapshot limits. Permission denial
+does not become disabled; missing events do not become disabled; recent events
+do not override missing/disabled policy. The metadata-only committed reports are
+appropriate reproducibility evidence: no raw script/event XML, account identity,
+SID, host name or developer path was found. They are historical observations of
+the recorded source revision, not a general Windows compatibility certificate.
+The mutation harness and reports are absent from the runtime wheel. Dependency
+licenses remain separately documented; no license blocker or leaked credential
+was found in the reviewed tracked files.
+
+Post-fix local commands and observed results:
+
+| Command | Result |
+|---|---|
+| `.\.venv\Scripts\python -m pytest -q` | 99 passed, 1 opt-in skipped |
+| `$env:SIGDOCTOR_WINDOWS_TESTS='1'; .\.venv\Scripts\python -m pytest -q -m windows_integration` | 1 passed, 99 deselected; temporary opt-in environment removed afterwards |
+| `.\.venv\Scripts\python -m ruff check .` | Passed |
+| `.\.venv\Scripts\python -m ruff format --check .` | Passed, 29 files |
+| `.\.venv\Scripts\python -m mypy src` | Passed, 10 source files |
+| `.\.venv\Scripts\python -m mypy --platform linux src` | Passed, 10 source files |
+| `.\.venv\Scripts\python -m build` | Built wheel and sdist |
+| `.\.venv\Scripts\python -m pip check` | No broken requirements |
+| `.\.venv-package-check\Scripts\python -m pip check` | No broken requirements |
+| `.\.venv-package-check\Scripts\python -m pip install --force-reinstall --no-deps dist/sigdoctor-0.1.0-py3-none-any.whl` | Rebuilt wheel installed |
+| `.\.venv-package-check\Scripts\sigdoctor --help` and `--version` | Exit 0; version 0.1.0 |
+| `.\.venv-package-check\Scripts\sigdoctor check examples/powershell_script.yml --json` | UNKNOWN, schema 1, exit 0 |
+| Installed CLI on temporary example with `taxonomy: ecs`, `--json` | UNKNOWN, UNSUPPORTED_TAXONOMY, empty evidence, exit 0 |
+| Byte comparison of every wheel runtime Python module with checkout | Identical; no tests, lab or reports in wheel |
+| `git diff --check` | Passed |
+
+No developer-host logging policy, ACL or channel configuration was modified in
+this review. Controlled mutations remain confined to disposable hosted runners.
+No merge, package publication, deployment, release or new telemetry family was
+performed. The non-blocking MINOR findings above remain open.

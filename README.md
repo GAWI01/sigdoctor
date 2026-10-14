@@ -47,7 +47,8 @@ unresolved evidence rather than a claim that logging is disabled.
 
 ## Supported input and results
 
-* One UTF-8 Sigma rule with `product: windows`, `category: ps_script`, and native
+* One UTF-8 rule using the default `sigma` taxonomy (absent or explicit), with
+  `product: windows`, `category: ps_script`, and native
   `ScriptBlockText` detection predicates. `service: powershell` is accepted only
   with an explicit positive conjunctive `EventID: 4104` and no conflicting category.
 * Native string predicates, `contains`, `startswith`, `endswith`, `all`, and
@@ -60,6 +61,8 @@ unresolved evidence rather than a claim that logging is disabled.
 Unsupported transformations are rejected before expansion, including in unused
 selectors; the UNKNOWN result explicitly says full Sigma validation was not
 completed. Unknown modifiers and malformed rules are input errors.
+Non-default taxonomies return UNKNOWN before host probing; their field names,
+values and logsource names cannot be assumed to describe native Windows telemetry.
 
 READY is **not** proof of rule correctness, complete capture, successful forwarding,
 correct SIEM normalization or detection effectiveness. BLIND is scoped to Windows
