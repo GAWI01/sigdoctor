@@ -1,0 +1,172 @@
+{
+  "scenario": "D \u2014 natural missing-machine-policy evidence gap",
+  "product_commit": "d541593d2f8235269523d7f5115d7c9d9dfa6d06",
+  "environment": {
+    "windows_edition": "Windows 11 Home",
+    "display_version": "25H2",
+    "build": "26200.9457",
+    "architecture": "x64"
+  },
+  "independent_oracle": {
+    "method": ".NET Registry64 read-only API and EventLogConfiguration, in Windows PowerShell 5.1",
+    "before": {
+      "PowerShellVersion": "5.1.26100.9444",
+      "PowerShellEdition": "Desktop",
+      "Is64Bit": true,
+      "Policy": {
+        "kind": null,
+        "value": null,
+        "state": "MISSING_KEY"
+      },
+      "Channel": {
+        "name": "Microsoft-Windows-PowerShell/Operational",
+        "enabled": true
+      }
+    },
+    "after": {
+      "PowerShellVersion": "5.1.26100.9444",
+      "PowerShellEdition": "Desktop",
+      "Is64Bit": true,
+      "Policy": {
+        "kind": null,
+        "value": null,
+        "state": "MISSING_KEY"
+      },
+      "Channel": {
+        "name": "Microsoft-Windows-PowerShell/Operational",
+        "enabled": true
+      }
+    }
+  },
+  "fixture": "examples/powershell_script.yml",
+  "fixture_sha256": "7946fbb5c5d05b3c3f3a2263cdf3b21017b19d7c29c476ec24febdb3b0f8ab9c",
+  "telemetry_generation": "No deliberate marker generation or policy change; existing and read-only inspection activity may produce events. Event payloads were not retained.",
+  "expected": "UNKNOWN",
+  "actual": "UNKNOWN",
+  "matched": true,
+  "command": ".\\.venv\\Scripts\\sigdoctor.exe check examples/powershell_script.yml --json",
+  "exit_code": 0,
+  "cli_assessment": {
+    "rule": {
+      "id": "5c0161e5-aa7a-46c8-9572-b157535182a6",
+      "title": "Example Script Block Marker",
+      "product": "windows",
+      "category": "ps_script",
+      "service": null,
+      "definition": "Script Block Logging must be enabled.",
+      "required_fields": [
+        "ScriptBlockText"
+      ],
+      "display_fields": [
+        "Computer"
+      ],
+      "tags": [
+        "attack.execution",
+        "attack.t1059.001"
+      ],
+      "mitre_techniques": [
+        "T1059.001"
+      ],
+      "event_ids": [],
+      "sha256": "7946fbb5c5d05b3c3f3a2263cdf3b21017b19d7c29c476ec24febdb3b0f8ab9c",
+      "issues": []
+    },
+    "requirements": [
+      {
+        "capability": "ScriptBlockText",
+        "provenance": "DIRECT",
+        "reason": "Referenced by the active detection condition."
+      },
+      {
+        "capability": "script_block_logging",
+        "provenance": "DERIVED",
+        "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+      },
+      {
+        "capability": "powershell_channel",
+        "provenance": "DERIVED",
+        "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+      },
+      {
+        "capability": "event_4104",
+        "provenance": "DERIVED",
+        "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+      },
+      {
+        "capability": "field_ScriptBlockText",
+        "provenance": "DERIVED",
+        "reason": "Required by telemetry profile windows_powershell_5_1_scriptblock_v1."
+      }
+    ],
+    "evidence": [
+      {
+        "capability": "script_block_logging",
+        "state": "UNKNOWN",
+        "source": "registry:HKLM(64-bit)\\SOFTWARE\\Policies\\Microsoft\\Windows\\PowerShell\\ScriptBlockLogging\\EnableScriptBlockLogging",
+        "observed_at": "2026-10-14T16:00:33.236282+00:00",
+        "details": {
+          "value": null,
+          "meaning": "Machine policy; absent/invalid is unknown, not disabled."
+        },
+        "error_code": null
+      },
+      {
+        "capability": "powershell_channel",
+        "state": "ENABLED",
+        "source": "wevtutil:gl:Microsoft-Windows-PowerShell/Operational",
+        "observed_at": "2026-10-14T16:00:33.236282+00:00",
+        "details": {
+          "channel": "Microsoft-Windows-PowerShell/Operational"
+        },
+        "error_code": null
+      },
+      {
+        "capability": "event_4104",
+        "state": "OBSERVED",
+        "source": "wevtutil:qe:Microsoft-Windows-PowerShell/Operational",
+        "observed_at": "2026-10-14T16:00:33.236282+00:00",
+        "details": {
+          "event_id": 4104,
+          "window_hours": 24,
+          "sample_limit": 1,
+          "latest_timestamp": "2026-10-14T16:00:32.911164+00:00"
+        },
+        "error_code": null
+      },
+      {
+        "capability": "field_ScriptBlockText",
+        "state": "OBSERVED",
+        "source": "wevtutil:qe:Microsoft-Windows-PowerShell/Operational",
+        "observed_at": "2026-10-14T16:00:33.236282+00:00",
+        "details": {
+          "field": "ScriptBlockText",
+          "nonempty_plaintext": true
+        },
+        "error_code": null
+      }
+    ],
+    "scope": "Windows PowerShell 5.1, machine policy, native plaintext 4104 ScriptBlockText only",
+    "limitations": [
+      "READY means scoped telemetry capability, not rule correctness, forwarding, backend translation or detection effectiveness.",
+      "PowerShell 7, other providers, user-only policy and arbitrary normalized fields are not assessed.",
+      "Newest matching event only, within 24 hours; absence of an event is not evidence of disabled logging.",
+      "Current policy and historical observation are not an atomic snapshot; running sessions may cache earlier policy.",
+      "No guarantee of complete capture, script-fragment reassembly or resistance to tampering; encrypted content is unresolved."
+    ],
+    "result": {
+      "status": "UNKNOWN",
+      "reasons": [
+        {
+          "code": "INSUFFICIENT_EVIDENCE",
+          "message": "Machine Script Block Logging policy and channel state must both be verified; events cannot substitute for missing configuration evidence."
+        }
+      ]
+    },
+    "schema_version": "1"
+  },
+  "limitations": [
+    "No controlled denied-permission condition was induced.",
+    "A/B/C were not executed.",
+    "This is a naturally present configuration gap, not a disposable modified host."
+  ]
+}

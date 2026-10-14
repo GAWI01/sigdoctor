@@ -1,7 +1,9 @@
 # Verification record — 2026-10-14
 
-Base commit `57e21c6`; work on local branch `codex/powershell-slice`. No push,
-release, deployment or publication. Existing MIT LICENSE unchanged.
+Original pre-push verification at base commit `57e21c6`, on
+`codex/powershell-slice`. That first iteration was subsequently committed and
+pushed as `d541593d2f8235269523d7f5115d7c9d9dfa6d06`. No release, deployment or
+publication occurred. Existing MIT LICENSE unchanged.
 
 Environment: Windows x64, Python 3.13. Commands below run from the repository
 unless noted. No Windows logging or security policy was modified.
@@ -99,5 +101,51 @@ NOT VERIFIED: controlled real-host READY/BLIND/PARTIAL/permission-denied/encrypt
 logging and policy-transition experiments; other Windows/Python versions; Linux
 CI execution; actual detection effectiveness; user demand; future bundled-binary
 license obligations. Main tests use fakes for these host states. The CI workflow
-was authored but not pushed or run on GitHub. No remaining environment blocker
-prevents the delivered local slice.
+had not run when the original record was written. Subsequent CI and controlled
+validation are recorded below.
+
+## Controlled Windows validation follow-up
+
+See WINDOWS_VALIDATION.md and its metadata-only evidence. An independent .NET
+Registry64 oracle confirmed the missing machine-policy key before and after the
+actual CLI check on Windows 11 Home 25H2 build 26200.9457 / Windows PowerShell
+5.1.26100.9444 x64. Expected UNKNOWN matched actual UNKNOWN. A/B/C and denied-policy
+states are tested separately on a disposable hosted Windows runner; do not infer
+their completion from the local result or fixture suite.
+
+The [initial GitHub CI run](https://github.com/GAWI01/sigdoctor/actions/runs/38592912614)
+failed Linux mypy with six Windows-registry attribute errors. Root cause:
+read_machine_policy imported/used winreg without an explicit platform guard, so
+the Linux type environment could not validate it. Added an early non-Windows
+rejection and regression test. The test failed before the fix and passed after
+it; `python -m mypy --platform linux src` then passed. Runtime unsupported-platform
+handling remains conservative. The original Windows job's test/lint/type/build
+steps passed, although its overall result was cancelled by the matrix failure.
+
+The lab harness's normal-host refusal is tested before native access. It is
+outside the runtime wheel. Controlled changes occur only in the authorized
+disposable GitHub-hosted Windows VM, with explicit rollback checks. No developer
+machine policy or ACL was changed.
+
+Local follow-up commands (before disposable run):
+
+| Command | Actual result |
+|---|---|
+| `.\.venv\Scripts\python -m pytest -q` | 95 passed, 1 opt-in test skipped |
+| `$env:SIGDOCTOR_WINDOWS_TESTS='1'; .\.venv\Scripts\python -m pytest -q -m windows_integration` | 1 passed, 95 deselected; environment restored |
+| `.\.venv\Scripts\python -m ruff check .` | Passed |
+| `.\.venv\Scripts\python -m ruff format --check .` | Passed |
+| `.\.venv\Scripts\python -m mypy src` | Passed, 10 source files |
+| `.\.venv\Scripts\python -m mypy --platform linux src` | Passed, 10 source files; previously reproduced six errors |
+| `.\.venv\Scripts\python -m build` | Built wheel and sdist |
+| `.\.venv-package-check\Scripts\python -m pip install --force-reinstall --no-deps dist/sigdoctor-0.1.0-py3-none-any.whl` | Installed rebuilt wheel |
+| `.\.venv-package-check\Scripts\sigdoctor --version` | 0.1.0, exit 0 |
+| `.\.venv-package-check\Scripts\sigdoctor check examples/powershell_script.yml --json` | UNKNOWN, schema 1, exit 0 |
+
+Wheel inspection confirmed the controlled-mutation harness is absent from the
+runtime wheel; it is included only in the source archive to reproduce its tests.
+Independent harness review identified an unverified registry-ACL restoration
+claim; restoration now requires descriptor readback equality. Its regression
+test failed before the helper was added and passed after correction. These local
+checks do not yet establish the controlled A/B/C/D2 results; those require the
+actual separate disposable-runner experiment.

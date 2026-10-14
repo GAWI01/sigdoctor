@@ -25,6 +25,8 @@ class ProbeError(Exception):
 
 
 def read_machine_policy() -> int | None:
+    if sys.platform != "win32":
+        raise ProbeError("UNSUPPORTED_PLATFORM")
     import winreg
 
     try:

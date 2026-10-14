@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 
 import pytest
 
-from sigdoctor.windows import ProbeError, WindowsProbe, run_command
+from sigdoctor.windows import ProbeError, WindowsProbe, read_machine_policy, run_command
 
 NOW = datetime(2026, 10, 14, 10, 0, tzinfo=UTC)
 CHANNEL = '<channel xmlns="http://schemas.microsoft.com/win/2004/08/events" name="Microsoft-Windows-PowerShell/Operational" enabled="true" />'
@@ -119,6 +119,13 @@ def test_non_windows_host_does_not_call_native_boundaries():
 
     result = WindowsProbe(read_policy=forbidden, runner=forbidden, platform="linux").collect()
     assert all(e.state == "UNSUPPORTED" for e in result)
+
+
+def test_registry_boundary_rejects_non_windows_before_import(monkeypatch):
+    monkeypatch.setattr("sigdoctor.windows.sys.platform", "linux")
+    with pytest.raises(ProbeError) as exc:
+        read_machine_policy()
+    assert exc.value.code == "UNSUPPORTED_PLATFORM"
 
 
 def test_subprocess_has_fixed_executable_timeout_and_no_shell(monkeypatch):

@@ -218,3 +218,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Disposable lab output (only reviewed, sanitized reports are copied into docs).
+validation-output/
