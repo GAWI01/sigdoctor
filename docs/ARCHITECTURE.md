@@ -1,6 +1,6 @@
 # First PowerShell slice
 
-The approved brief is `SIGDOCTOR_CODEX_PROMPT.md`; feasibility narrows the first
+[FEASIBILITY.md](FEASIBILITY.md) narrows the first
 iteration to native Windows PowerShell 5.1 ScriptBlockText. Python >=3.11,<4,
 src-layout package, argparse CLI, pySigma behind an adapter, one bundled JSON
 telemetry profile (human-readable, standard library loading). No web service,
