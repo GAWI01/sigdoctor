@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools==84.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sigdoctor"
+version = "0.1.0"
+description = "Local, read-only telemetry readiness checks for supported Sigma rules"
+readme = "README.md"
+requires-python = ">=3.11,<4"
+license = "MIT"
+license-files = ["LICENSE"]
+dependencies = ["pysigma==2.0.1", "PyYAML==6.0.3"]
+
+[project.scripts]
+sigdoctor = "sigdoctor.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+sigdoctor = ["profiles/*.json", "py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra"
+markers = ["windows_integration: opt-in read-only Windows probes"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "S"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+
+[[tool.mypy.overrides]]
+module = ["sigma.*"]
+follow_untyped_imports = true

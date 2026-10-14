@@ -1,0 +1,18 @@
+title: Example Script Block Marker
+id: 5c0161e5-aa7a-46c8-9572-b157535182a6
+status: experimental
+description: Self-authored telemetry example; not a production detection.
+logsource:
+  product: windows
+  category: ps_script
+  definition: Script Block Logging must be enabled.
+detection:
+  selection:
+    ScriptBlockText|contains: 'SigDoctorExampleMarker'
+  condition: selection
+fields:
+  - Computer
+tags:
+  - attack.execution
+  - attack.t1059.001
+level: informational
