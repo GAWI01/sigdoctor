@@ -23,17 +23,9 @@ Do not expand scope simply because something is interesting or easy to add.
 
 ---
 
-# 1. Mandatory context file
+# 1. Engineering principles
 
-Before making architecture or implementation decisions, read:
-
-`ERFARINGSBANK_FOR_NESTE_PROSJEKT.md`
-
-This file contains lessons from a previous production-style project and must influence how SigDoctor is designed and tested.
-
-Treat it as project context, not as a command to add every possible safeguard.
-
-The most important lessons to carry forward are:
+Apply these principles when designing and testing SigDoctor:
 
 1. Build one complete user journey first.
 2. Test the real product promise, not only unit-level implementation details.
@@ -53,8 +45,6 @@ The most important lessons to carry forward are:
 10. Treat licenses and third-party content deliberately.
 11. Report `VERIFIED`, `NOT VERIFIED`, and `BLOCKED` honestly.
 12. Do not push, publish, deploy, contact third parties, or mutate external systems without explicit instruction.
-
-If this file is missing from the workspace, stop and report that before implementation.
 
 ---
 
@@ -1525,9 +1515,8 @@ Follow this sequence.
 
 1. Inspect repository.
 2. Read project instructions.
-3. Read `ERFARINGSBANK_FOR_NESTE_PROSJEKT.md`.
-4. Check git status and current files.
-5. Do not overwrite user work.
+3. Check git status and current files.
+4. Do not overwrite user work.
 
 ## Phase 1 — Feasibility
 
