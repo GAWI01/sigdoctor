@@ -4,7 +4,7 @@
 **Architecture:** See ARCHITECTURE.md. One adapter, profile, probe, evaluator and
 two renderers; immutable domain records. No later telemetry families.
 **Stack:** Python 3.11+, pySigma 2.0.1, PyYAML, stdlib; pytest, ruff, mypy, build.
-**Spec:** ../SIGDOCTOR_CODEX_PROMPT.md and ARCHITECTURE.md.
+**Spec:** FEASIBILITY.md and ARCHITECTURE.md.
 
 ## Constraints and review focus
 
