@@ -22,19 +22,28 @@ sigdoctor check suspicious_powershell.yml
 sigdoctor check suspicious_powershell.yml --json
 ```
 
-Example output excerpt when machine Script Block Logging is explicitly disabled:
+![SigDoctor terminal output: READY, with machine policy and channel enabled and a recent plaintext 4104 event observed](docs/assets/ready-scenario-a.webp)
+
+A real READY assessment of the bundled example rule from the controlled Windows
+validation (scenario A). The run recorded `--json`; the image shows that same
+assessment in SigDoctor's terminal format.
+
+Scenario B in the same run disabled the machine policy but kept older plaintext
+events. The events do not rescue the result:
 
 ```text
-SigDoctor
-Rule: Example Script Block Marker
+Telemetry evidence:
+  script_block_logging: DISABLED [registry:HKLM(64-bit)\…\EnableScriptBlockLogging; …]
+  powershell_channel: ENABLED [wevtutil:gl:Microsoft-Windows-PowerShell/Operational; …]
+  event_4104: OBSERVED [wevtutil:qe:Microsoft-Windows-PowerShell/Operational; …]
+  field_ScriptBlockText: OBSERVED [wevtutil:qe:Microsoft-Windows-PowerShell/Operational; …]
 
 Result: BLIND
   CAPABILITY_DISABLED: Required capability script_block_logging is explicitly disabled for this provider.
 ```
 
-The excerpt uses the bundled example rule and a controlled disabled-policy test
-fixture. Full output includes the assessment scope, timestamped evidence, sources,
-and limitations. Your host may return a different result.
+Excerpt shortened with `…`; detail lines and limits are omitted. Your host may
+return a different result.
 
 ## Try it
 
@@ -159,11 +168,22 @@ See [SECURITY.md](SECURITY.md) for the trust boundary and reporting guidance.
 
 ## Validation
 
-Controlled CLI tests on a disposable Windows Server 2025 host matched all five
-known states: READY with fresh plaintext telemetry, BLIND with disabled policy,
-PARTIAL before a recent event existed, and UNKNOWN for both missing policy and
-registry permission denial. Rollback was verified. A read-only Windows 11 check
-also confirmed UNKNOWN for missing machine policy.
+The installed CLI was run against five known states on a disposable
+Windows Server 2025 runner (PowerShell 5.1.26100) in
+[GitHub Actions run 38596950991](https://github.com/GAWI01/sigdoctor/actions/runs/38596950991):
+
+| Scenario | Known state | Expected | Actual |
+|---|---|---|---|
+| A | Policy on, channel on, fresh plaintext 4104 | READY | READY |
+| B | Policy explicitly off, older plaintext events kept | BLIND | BLIND |
+| C | Policy on, channel on, no recent 4104 yet | PARTIAL | PARTIAL |
+| D1 | Machine policy missing | UNKNOWN | UNKNOWN |
+| D2 | Policy set, but registry read access denied | UNKNOWN | UNKNOWN |
+
+Rollback of policy, channel, and ACLs was verified. A read-only Windows 11
+check also confirmed UNKNOWN for missing machine policy. The
+[recorded results](docs/validation/windows_hosted_2026-10-14.json) contain
+SigDoctor's JSON for every scenario.
 
 These are specific host experiments, not proof of every Windows version,
 permission context, or detection outcome. See the
